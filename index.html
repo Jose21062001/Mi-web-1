@@ -57,41 +57,53 @@
     </style>
 </head>
 <body>
-    <div class="container" id="app"></div>
+    <div class="container" id="app">
+        <p>Cargando...</p>
+    </div>
 
     <script>
         // CONFIGURACIÓN: 14 de Febrero de 2026
-        const FECHA_INICIO = new Date(2026, 1, 14, 0, 0, 0); // 14 de febrero 2026, 00:00
-        const FECHA_FIN = new Date(2026, 1, 15, 0, 0, 0);    // 15 de febrero 2026, 00:00
+        const FECHA_INICIO = new Date(2026, 1, 14, 0, 0, 0); 
+        const FECHA_FIN = new Date(2026, 1, 15, 0, 0, 0);    
         const MENSAJE = `Hola Rosmery, perdona por molestarte, pero la verdad es que en este día, pues solo quería agradecerte por los momentos hermosos y felices que me permitiste vivir a tu lado...\n\nFuiste una mujer muy especial para mí, fuiste ese alguien que me hizo conocer lo que es realmente estar enamorado y sentir lo que es el amor... Y nada, fuiste una de las cosas más bonitas que me ha pasado en la vida.\n\nDuele tanto que las cosas no hayan salido como queríamos, pero ni modo. Solo te deseo que seas muy feliz y que tengas muchos éxitos... Siempre estarás en algún pedazo de mi corazón.\n\nTe amo y te quiero mucho... Cuídate.`;
 
+        // Utilidad para manejar localStorage de forma segura
+        const storage = {
+            get: (key) => {
+                try { return localStorage.getItem(key); } 
+                catch (e) { return window['temp_' + key] || null; }
+            },
+            set: (key, val) => {
+                try { localStorage.setItem(key, val); } 
+                catch (e) { window['temp_' + key] = val; }
+            }
+        };
+
         function iniciar() {
+            const app = document.getElementById('app');
+            if (!app) return;
+
             const ahora = new Date();
-            
-            // Verificar si ya se abrió el mensaje y revisar si pasó la hora
-            const tiempoApertura = localStorage.getItem('mensaje_abierto');
+            const tiempoApertura = storage.get('mensaje_abierto');
+
+            // Verificar si el tiempo de visualización expiró (1 hora)
             if (tiempoApertura) {
                 const tiempoTranscurrido = ahora - new Date(parseInt(tiempoApertura));
-                const unaHoraEnMs = 60 * 60 * 1000; // 1 hora en milisegundos
-                
-                if (tiempoTranscurrido >= unaHoraEnMs) {
+                if (tiempoTranscurrido >= 3600000) {
                     mostrarExpirado();
                     return;
                 }
             }
             
-            // Verificar si estamos en el rango de fecha válido (solo 14 de febrero)
+            // Lógica de fechas
             if (ahora < FECHA_INICIO) {
                 mostrarBloqueado();
             } else if (ahora >= FECHA_FIN) {
                 mostrarFechaExpirada();
             } else {
-                // Estamos el 14 de febrero
                 if (tiempoApertura) {
-                    // Ya se abrió pero aún no pasó la hora
                     iniciarExperiencia();
                 } else {
-                    // Aún no se ha abierto
                     mostrarBienvenida();
                 }
             }
@@ -118,37 +130,30 @@
                 const h = Math.floor((diff % 86400000) / 3600000);
                 const m = Math.floor((diff % 3600000) / 60000);
                 const s = Math.floor((diff % 60000) / 1000);
-                document.getElementById('timer-bloqueo').textContent = `${d}d ${h}h ${m}m ${s}s`;
+                const el = document.getElementById('timer-bloqueo');
+                if(el) el.textContent = `${d}d ${h}h ${m}m ${s}s`;
             }, 1000);
         }
 
         function mostrarFechaExpirada() {
-            const app = document.getElementById('app');
-            app.innerHTML = `
+            document.getElementById('app').innerHTML = `
                 <div style="font-size: 50px;">⏰</div>
                 <h2 style="margin-top:15px; font-size: 24px;">El tiempo ha pasado</h2>
-                <p style="color:#7f8c8d; margin-top:15px; line-height: 1.5;">
-                    Este mensaje solo estaba disponible<br>el 14 de febrero de 2026.
-                </p>
+                <p style="color:#7f8c8d; margin-top:15px; line-height: 1.5;">Este mensaje solo estuvo disponible el 14 de febrero.</p>
                 <p style="color:#95a5a6; margin-top:20px; font-size: 14px;">Cuídate mucho.</p>
             `;
         }
 
         function mostrarExpirado() {
-            const app = document.getElementById('app');
-            app.innerHTML = `
+            document.getElementById('app').innerHTML = `
                 <div style="font-size: 50px;">⌛</div>
                 <h2 style="margin-top:15px;">El tiempo expiró</h2>
-                <p style="color:#7f8c8d; margin-top:15px; line-height: 1.5;">
-                    El mensaje solo podía verse durante una hora<br>desde que lo abriste.
-                </p>
-                <p style="color:#95a5a6; margin-top:20px; font-size: 14px;">Cuídate mucho.</p>
+                <p style="color:#7f8c8d; margin-top:15px; line-height: 1.5;">El mensaje ya no está disponible.</p>
             `;
         }
 
         function mostrarBienvenida() {
-            const app = document.getElementById('app');
-            app.innerHTML = `
+            document.getElementById('app').innerHTML = `
                 <div style="font-size: 50px;">💌</div>
                 <h2 style="margin-top:15px;">Hola Rosmery, soy José</h2>
                 <p style="color:#7f8c8d; margin-top:10px;">He preparado algo para ti.</p>
@@ -159,17 +164,15 @@
         }
 
         function abrirMensaje() {
-            // Guardar el momento de apertura en localStorage
-            localStorage.setItem('mensaje_abierto', Date.now().toString());
+            storage.set('mensaje_abierto', Date.now().toString());
             iniciarExperiencia();
         }
 
         function iniciarExperiencia() {
-            const app = document.getElementById('app');
-            app.innerHTML = `
+            document.getElementById('app').innerHTML = `
                 <div style="font-size: 50px;">💙</div>
                 <h2>Para ti</h2>
-                <a href="https://youtu.be/ue0RP3C1Brg" target="_blank" class="button youtube-button">▶️ Escuchar</a>
+                <a href="https://youtu.be/ue0RP3C1Brg" target="_blank" class="button youtube-button">▶️ Escuchar música</a>
                 <div class="message-box" id="box">
                     <span id="texto-mensaje"></span>
                     <div id="ashes" class="ashes-message">
@@ -188,7 +191,7 @@
             const box = document.getElementById('box');
             let i = 0;
             function escribir() {
-                if (i < MENSAJE.length) {
+                if (elemento && i < MENSAJE.length) {
                     elemento.textContent += MENSAJE.charAt(i);
                     i++;
                     box.scrollTop = box.scrollHeight;
@@ -203,17 +206,17 @@
         function quemarMensaje() {
             const texto = document.getElementById('texto-mensaje');
             const ashes = document.getElementById('ashes');
-            texto.classList.add('burning');
+            if(texto) texto.classList.add('burning');
             setTimeout(() => {
-                ashes.classList.add('show-ashes');
+                if(ashes) ashes.classList.add('show-ashes');
             }, 2500);
         }
 
         function iniciarRelojDestruccion() {
-            const tiempoApertura = parseInt(localStorage.getItem('mensaje_abierto'));
+            const tiempoApertura = parseInt(storage.get('mensaje_abierto'));
             const ahora = Date.now();
             const tiempoTranscurrido = Math.floor((ahora - tiempoApertura) / 1000);
-            let tiempo = 3600 - tiempoTranscurrido; // 3600 segundos = 1 hora
+            let tiempo = 3600 - tiempoTranscurrido; 
             
             const clock = document.getElementById('clock');
             const interval = setInterval(() => {
@@ -221,7 +224,7 @@
                 if (tiempo <= 0) {
                     clearInterval(interval);
                     mostrarExpirado();
-                } else {
+                } else if(clock) {
                     let m = Math.floor(tiempo / 60);
                     let s = tiempo % 60;
                     clock.textContent = `0:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
@@ -229,9 +232,9 @@
             }, 1000);
         }
 
-        iniciar();
+        // Ejecutar al cargar
+        window.onload = iniciar;
     </script>
 </body>
 </html>
-
     
