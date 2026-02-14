@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para Rosmery 🫂</title>
+    <style>
+        /* Reset y Base */
+        * { box-sizing: border-box; }
+        body, html { 
+            height: 100%; margin: 0; padding: 0; 
+            font-family: 'Georgia', serif; overflow: hidden; 
+            background-color: #000; 
+        }
+        
+        /* Pantalla de Inicio - Optimizada para Móvil */
+        #welcome-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #d32f2f 0%, #7b1d1d 100%); 
+            z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; text-align: center; padding: 30px;
+        }
+
+        #welcome-screen img {
+            width: 140px; height: 140px; /* Tamaño ideal para móvil */
+            border-radius: 50%; border: 4px solid rgba(255, 255, 255, 0.6);
+            margin-bottom: 25px; object-fit: cover; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        #welcome-screen h1 { 
+            font-size: 1.3rem; margin-bottom: 30px; 
+            font-weight: normal; line-height: 1.5; 
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3); 
+        }
+
+        .btn-ver {
+            padding: 16px 55px; font-size: 1.2rem; background: #fff; border: none;
+            border-radius: 50px; color: #7b1d1d; cursor: pointer; font-weight: bold;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3); -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Fondo de la carta */
+        #bg-slider {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+            background-size: cover; background-position: center;
+            transition: background-image 1.5s ease-in-out;
+            filter: brightness(0.6);
+            display: none;
+        }
+
+        /* Contenedor de la Carta Adaptable */
+        .container { 
+            position: relative; display: none; justify-content: center; 
+            align-items: center; height: 100vh; width: 100%; z-index: 10; 
+            padding: 15px;
+        }
+        
+        .card {
+            background: rgba(0, 0, 0, 0.25); 
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-radius: 20px;
+            padding: 25px; width: 100%; max-width: 400px;
+            max-height: 85vh; overflow-y: auto; /* Permite scroll si el texto es largo en pantallas pequeñas */
+            color: #fff; text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h2 { color: #fff; font-size: 1.4rem; margin-bottom: 15px; text-shadow: 2px 2px 8px rgba(0,0,0,0.8); }
+        
+        #typewriter { 
+            font-size: 1.1rem; line-height: 1.6; 
+            white-space: pre-wrap; display: inline; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,1); 
+            font-weight: 500;
+        }
+
+        .cursor { display: inline-block; width: 2px; background-color: #fff; margin-left: 4px; animation: blink 0.8s infinite; }
+
+        @keyframes blink { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+
+        /* Pétalos optimizados para no saturar el procesador del móvil */
+        .petal {
+            position: fixed; top: -10%; color: #ffb7b2;
+            z-index: 5; pointer-events: none; animation: fall linear forwards;
+            font-size: 20px;
+        }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="welcome-screen">
+        <img src="https://i.ibb.co/nM3ryYG3/images.jpg" alt="Rosmery">
+        <h1>Hola Rosmery, hoy por tu día, te he preparado un pequeño detalle... <br><br>¿Lo quieres ver?</h1>
+        <button class="btn-ver" onclick="iniciarDetalle()">Ver</button>
+    </div>
+
+    <div id="bg-slider"></div>
+
+    <div class="container" id="main-container">
+        <div class="card">
+            <h2>¡Feliz Día de la Administradora!</h2>
+            <div id="typewriter"></div><span class="cursor">|</span>
+        </div>
+    </div>
+
+    <script>
+        const images = [
+            'https://i.ibb.co/xKhJpc9S/FB-IMG-1771072232168.jpg',
+            'https://i.ibb.co/60ZWS3qF/FB-IMG-1771072220888.jpg',
+            'https://i.ibb.co/S7JxbCWP/FB-IMG-1771072225738.jpg'
+        ];
+
+        const message = "Hoy es un día muy especial, un día para homenajear a esa mujer luchadora, a quien tuve la fortuna de conocer desde la secundaria, compartir con ella su etapa de estudios y también estar ahí cuando ya empezó a trabajar. \n\nEsa mujer que siempre busca sobresalir y cumplir sus metas, y esa mujer eres tú Rosmery 🫂, mi administradora favorita. \n\nEstoy orgulloso de ti y de lo que has logrado 😚😚";
+
+        const bgSlider = document.getElementById('bg-slider');
+        let imgIndex = 0;
+
+        function changeBackground() {
+            bgSlider.style.backgroundImage = `url('${images[imgIndex]}')`;
+            imgIndex = (imgIndex + 1) % images.length;
+        }
+
+        function iniciarDetalle() {
+            document.getElementById('welcome-screen').style.display = 'none';
+            bgSlider.style.display = 'block';
+            document.getElementById('main-container').style.display = 'flex';
+            changeBackground();
+            setInterval(changeBackground, 4500); // Un poco más rápido para mantener interés
+            setInterval(createPetal, 600); // Menos pétalos para mejor rendimiento en móvil
+            setTimeout(typeWriter, 800);
+        }
+
+        let charIndex = 0;
+        function typeWriter() {
+            if (charIndex < message.length) {
+                document.getElementById('typewriter').textContent += message.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 75); // Velocidad óptima de lectura
+            }
+        }
+
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.innerHTML = '🌸';
+            petal.className = 'petal';
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            petal.style.opacity = Math.random() * 0.7 + 0.3;
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), 6000);
+        }
+    </script>
+</body>
+</html>
